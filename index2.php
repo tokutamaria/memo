@@ -29,33 +29,29 @@
 <main>
 
 <h2>Practice</h2>
-
-<pre>
-
 <?php
 
-try {
+require ('dbconnect.php');
 
-    $db = new PDO('mysql:dbname=mydb
-    ;host=localhost;port=3306;charset=utf8','root','root');
-
-} catch(PDOException $e) {
-
-    echo 'DB接続エラー: ' . $e->getMessage();
-
+if(isset($_REQUEST['page']) && is_numeric($_REQUEST['page'])) {
+    $page = $_REQUEST['page'];
+}else{
+    $page = 1;
 }
+$start = 5 * ($page - 1);
 
-
-$records = $db->query('SELECT * FROM my_items');
-while ($record = $records->fetch()) {
-    print($record['item_name'] . "\n");
-}
-
-
+$memos = $db->prepare('SELECT * FROM memos ORDER BY id DESC LIMIT ?, 5');
+$memos->bindParam(1, $start, PDO::PARAM_INT);
+$memos->execute();
 ?>
 
-</pre>
-
+<article>
+    <?php while($memo = $memos->fetch()): ?>
+    <p><a href="memo.php?id=<?php print($memo['id']); ?>"><?php print(mb_substr($memo['memo'], 0, 50)); ?></a></p>
+    <time><?php print($memo['created_at']); ?></time>
+    <hr>
+    <?php endwhile; ?>
+</article>
 </main>
 
 </body>
