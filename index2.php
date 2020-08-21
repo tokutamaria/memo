@@ -30,7 +30,6 @@
 
 <h2>Practice</h2>
 <?php
-
 require ('dbconnect.php');
 
 if(isset($_REQUEST['page']) && is_numeric($_REQUEST['page'])) {
@@ -51,6 +50,19 @@ $memos->execute();
     <time><?php print($memo['created_at']); ?></time>
     <hr>
     <?php endwhile; ?>
+
+    <?php if ($page >= 2): ?>
+    <a href="index2.php?page=<?php print($page-1); ?>"><?php print($page-1); ?>ページ目へ</a>
+    <?php endif ;?>
+
+    <?php
+    $counts = $db->query('SELECT COUNT(*) as cnt FROM memos');
+    $count = $counts->fetch();
+    $max_page = ceil($count['cnt'] / 5);
+    if($page < $max_page):
+    ?>
+        <a href="index2.php?page=<?php print($page+1); ?>"><?php print($page+1); ?>ページ目へ</a>
+    <?php endif ;?>
 </article>
 </main>
 
